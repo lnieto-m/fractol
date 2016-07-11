@@ -6,11 +6,17 @@
 #    By: lnieto-m <lnieto-m@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/01/07 18:24:41 by lnieto-m          #+#    #+#              #
-#    Updated: 2016/01/26 16:08:32 by lnieto-m         ###   ########.fr        #
+#    Updated: 2016/07/11 15:39:18 by lnieto-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = clang
+
+SRC_PATH = srcs
+
+OBJ_PATH = obj
+
+INC = -I./usr/local/include -I./libft/includes -I./includes
 
 CFLAGS = -Wall -Wextra -Werror
 
@@ -31,20 +37,26 @@ SRC_NAME = main.c \
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
+SRC = $(addprefix $(SRC_PATH)/,$(SRC_NAME))
+
+OBJ = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME))
+
 LIBFT_PATH = libft/libft.a
 
 all: $(NAME)
 
-$(NAME): $(OBJ_NAME)
+$(NAME): $(OBJ)
 	make -C libft/
-	$(CC) $(LIBFT_PATH) $(OBJ_NAME) -o $(NAME) -L/usr/local/lib/ $(LFLAGS)
+	$(CC) $(LIBFT_PATH) $(OBJ) -o $(NAME) -L/usr/local/lib/ $(LFLAGS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -I./usr/local/include -I./libft/includes -c $<
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+	@mkdir $(OBJ_PATH) 2> /dev/null || true
+	$(CC) $(CFLAGS) $(INC) -o $@ -c $<
 
 clean:
 	make -C libft/ clean
-	rm -rf $(OBJ_NAME)
+	rm -rf $(OBJ)
+	rm -rf $(OBJ_PATH)
 
 fclean: clean
 	make -C libft/ fclean
